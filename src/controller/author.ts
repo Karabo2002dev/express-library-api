@@ -1,5 +1,4 @@
 import { Author } from "../model/author";
-
 export let authorsList: Author[] = [];
 
 let authorid: number = 1;
@@ -30,6 +29,10 @@ export const updateAuthor = (
   return author;
 };
 
-export const deleteAuthor = (id: number) => {
-  return authorsList.filter((author) => author.id !== id);
+export const deleteAuthor = (id: number) : Author[] | undefined => {
+    const author = getAuthor(id)
+
+    if (!author) return undefined
+
+    return authorsList.filter((author) => author.id !== id);
 };
