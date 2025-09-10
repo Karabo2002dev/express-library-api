@@ -26,7 +26,7 @@ export const addBook = (
     isbn,
     pages,
     summary,
-    author,
+    author : `${author.firstName} ${author.lastName}` ,
   };
 
   booksList.push(newBook);
