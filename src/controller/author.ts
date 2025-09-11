@@ -29,10 +29,10 @@ export const updateAuthor = (
   return author;
 };
 
-export const deleteAuthor = (id: number) : Author[] | undefined => {
-    const author = getAuthor(id)
+export const deleteAuthor = (id: number): Author | undefined => {
+  const index = authorsList.findIndex((a) => a.id === id);
+  if (index === -1) return undefined;
 
-    if (!author) return undefined
-
-    return authorsList.filter((author) => author.id !== id);
+  const [deleted] = authorsList.splice(index, 1);
+  return deleted;
 };

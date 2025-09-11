@@ -1,19 +1,23 @@
-import bodyParser from 'body-parser'
-import express, {Express} from 'express'
-import cors from 'cors'
-import { loggerMiddleware } from './middleware/loggerMiddleware'
-import router from './routes/author'
+import bodyParser from "body-parser";
+import express, { Express } from "express";
+import cors from "cors";
+import { loggerMiddleware } from "./middleware/loggerMiddleware";
+import authorRouter from "./routes/author";
+import { errorMiddleware } from "./middleware/errorMiddleware";
 
-const app : Express = express()
+const app: Express = express();
 
-app.use(express.json())
-app.use(bodyParser.json())
-app.use(cors())
-app.use(loggerMiddleware)
-app.use("/", router)
+app.use(cors());
+app.use(express.json());
+app.use(bodyParser.json());
+app.use(loggerMiddleware);
 
-const PORT : string | number = process.env.PORT || 3000
+app.use("/", authorRouter);
+
+app.use(errorMiddleware);
+
+const PORT: string | number = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`)
-})
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
