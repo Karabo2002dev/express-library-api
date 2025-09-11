@@ -9,7 +9,7 @@ export const addBook = (
   title: string,
   genre: string,
   publishedYear: number,
-  authorId: number,
+  authorId : number,
   isbn?: string,
   pages?: number,
   summary?: string
@@ -50,13 +50,14 @@ export const updateBook = (
   return book;
 };
 
-export const deleteBook = (id: number): Book[] | undefined => {
-  const book = getBook(id);
+export const deleteBook = (id: number): Book | undefined => {
+  const index = booksList.findIndex((book) => book.id === id);
+  if (index === -1) return undefined;
 
-  if (!book) return undefined;
-
-  return booksList.filter((book) => book.id !== id);
+  const [deleted] = booksList.splice(index, 1);
+  return deleted;
 };
+
 
 export const listBookByAuthor = (id: number): Book[] | undefined => {
   const author = authorsList.find((author) => author.id === id);

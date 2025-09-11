@@ -4,6 +4,7 @@ import cors from "cors";
 import { loggerMiddleware } from "./middleware/loggerMiddleware";
 import authorRouter from "./routes/author";
 import { errorMiddleware } from "./middleware/errorMiddleware";
+import bookRouter  from "./routes/book";
 
 const app: Express = express();
 
@@ -13,6 +14,7 @@ app.use(bodyParser.json());
 app.use(loggerMiddleware);
 
 app.use("/", authorRouter);
+app.use("/", bookRouter)
 
 app.use(errorMiddleware);
 
