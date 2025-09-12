@@ -9,14 +9,24 @@ export const addBook = (
   title: string,
   genre: string,
   publishedYear: number,
-  authorId : number,
+  authorId: number,
   isbn?: string,
   pages?: number,
   summary?: string
-): Book | undefined => {
+): Book | undefined | string => {
   const author = authorsList.find((author) => author.id === authorId);
 
   if (!author) return undefined;
+
+  const existingBook = booksList.find(
+    (book) =>
+      book.title.toLowerCase() === title.toLowerCase() &&
+      book.author === `${author.firstName} ${author.lastName}`
+  );
+
+  if (existingBook) {
+    return "DUPLICATE";
+  }
 
   const newBook: Book = {
     id: bookId++,
@@ -57,7 +67,6 @@ export const deleteBook = (id: number): Book | undefined => {
   const [deleted] = booksList.splice(index, 1);
   return deleted;
 };
-
 
 export const listBookByAuthor = (id: number): Book[] | undefined => {
   const author = authorsList.find((author) => author.id === id);

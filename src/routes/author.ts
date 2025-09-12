@@ -17,7 +17,7 @@ authorRouter.get("/", (req: Request, res: Response) => {
 
 authorRouter.get("/authors", (req: Request, res: Response) => {
   const authors = getAllAuthors();
-  res.status(200).json({ authors });
+  res.status(200).json({ authors: authors });
 });
 
 authorRouter.post(
@@ -37,6 +37,9 @@ authorRouter.post(
     try {
       const { firstName, lastName } = req.body;
       const newAuthor = addAuthor(firstName, lastName);
+      if (newAuthor === "DUPLICATE") {
+        return next({ status: 409, message: "Author Exist" });
+      }
       res.status(201).json(newAuthor);
     } catch (err) {
       next(err);

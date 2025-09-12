@@ -6,6 +6,10 @@ interface CustomError extends Error {
   errors?: ValidationError[];
 }
 
+export const notFoundHandler = (req: Request, res: Response) => {
+  res.status(404).json({ error: "Route not found" });
+};
+
 export const errorMiddleware = (
   err: CustomError,
   req: Request,

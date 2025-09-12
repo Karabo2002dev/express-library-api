@@ -15,7 +15,7 @@ const bookRouter = Router();
 bookRouter.get("/books", (req: Request, res: Response, next: NextFunction) => {
   try {
     const books = getAllBooks();
-    res.status(200).json({ books });
+    res.status(200).json({ books: books });
   } catch (err) {
     next(err);
   }
@@ -45,19 +45,25 @@ bookRouter.post(
     try {
       const { title, genre, publishedYear, authorId, isbn, pages, summary } =
         req.body;
-
       const newBook = addBook(
-        authorId,
         title,
         genre,
         publishedYear,
+        authorId,
         isbn,
         pages,
         summary
       );
 
       if (!newBook) {
-        return res.status(404).json({ msg: "Book not found" });
+        return next({
+          status: 404,
+          message: "Book could not be added (Author Not Found)",
+        });
+      }
+
+      if (newBook === "DUPLICATE") {
+        return next({ status: 409, message: "Book Exist" });
       }
 
       res.status(201).json(newBook);
@@ -80,9 +86,9 @@ bookRouter.get(
       const id = parseInt(req.params.id);
       const bookFound = getBook(id);
 
-      if (!bookFound) return res.status(404).json({ msg: "Book Not Found" });
+      if (!bookFound) return next({ status: 404, message: "Book Not Found" });
 
-      res.status(200).json(bookFound);
+      res.status(200).json({ bookFound: bookFound });
     } catch (err) {
       next(err);
     }
@@ -116,8 +122,7 @@ bookRouter.put(
     try {
       const id = parseInt(req.params.id);
 
-      const { title, genre, publishedYear, isbn, pages, summary } =
-        req.body;
+      const { title, genre, publishedYear, isbn, pages, summary } = req.body;
 
       const updatedBook = updateBook(id, {
         title,
@@ -128,9 +133,11 @@ bookRouter.put(
         summary,
       });
 
-      if (!updatedBook) return res.status(404).json({ msg: "Book Not Found" });
+      if (!updatedBook) return next({ status: 404, message: "Book Not Found" });
 
-      res.status(200).json(updatedBook);
+      res
+        .status(200)
+        .json({ messege: "Book Updated Sucessfully", book: updatedBook });
     } catch (err) {
       next(err);
     }
@@ -150,7 +157,8 @@ bookRouter.delete(
       const id = parseInt(req.params.id);
       const bookToDelete = deleteBook(id);
 
-      if (!bookToDelete) return res.status(404).json({ msg: "Book Not Found" });
+      if (!bookToDelete)
+        return next({ status: 404, message: "Book Not Found" });
       res
         .status(200)
         .json({ msg: "Book deleted successfully", book: bookToDelete });
@@ -174,7 +182,10 @@ bookRouter.get(
       const authorBooks = listBookByAuthor(id);
 
       if (!authorBooks || authorBooks.length === 0)
-        return res.status(404).json({ msg: "Books Not Found for this Author" });
+        return next({
+          status: 404,
+          message: "Books Not Found for this Author",
+        });
 
       res.status(200).json(authorBooks);
     } catch (err) {
@@ -182,6 +193,5 @@ bookRouter.get(
     }
   }
 );
-
 
 export default bookRouter;
